@@ -1,6 +1,6 @@
 {
   "name": "kaeos",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Keep An Eye On Shit",
   "main": "lib/index.js",
   "scripts": {
