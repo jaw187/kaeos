@@ -1,0 +1,27 @@
+{
+  "name": "kaeos",
+  "version": "0.0.0",
+  "description": "Keep An Eye On Shit",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@https://github.com/jaw187/kaeos.git"
+  },
+  "keywords": [
+    "monitor",
+    "monitoring"
+  ],
+  "author": "James Weston",
+  "license": "ISC",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "hoek": "^3.0.4",
+    "joi": "^8.0.2",
+    "wreck": "^7.0.0"
+  }
+}
