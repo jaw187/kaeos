@@ -4,7 +4,7 @@
   "description": "Keep An Eye On Shit",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "lab -L -v -t 100 -m 10000"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,9 @@
     "hoek": "3.x.x",
     "joi": "8.x.x",
     "wreck": "7.x.x"
+  },
+  "devDependencies": {
+    "code": "^2.1.0",
+    "lab": "^10.2.0"
   }
 }
