@@ -4,6 +4,7 @@
 const Code = require('code');
 const Hapi = require('hapi');
 const Lab = require('lab');
+const Vision = require('vision');
 const Kaeos = require('../lib');
 
 
@@ -44,7 +45,10 @@ describe('Keep An Eye On Shit', () => {
             ];
 
             const options = {
-                monitors: monitors
+                monitors: monitors,
+                server: {
+                    plugins: Vision
+                }
             };
 
             const kaeos = new Kaeos(options);
