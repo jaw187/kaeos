@@ -17,7 +17,7 @@ internals.main = function () {
                 agent: {
                     name: 'HttpHeartbeat',
                     settings: {
-                        url: 'http://localhost/heartbeat',
+                        url: 'http://somehost/heartbeat',
                     }
                 },
                 reporter: {
