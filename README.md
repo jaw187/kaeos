@@ -30,7 +30,7 @@ internals.main = function () {
                 }
             },
         ],
-        connection: {}
+        server: {}
     };
 
     const kaeos = new Kaeos(options);
