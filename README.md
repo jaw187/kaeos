@@ -17,14 +17,15 @@ internals.main = function () {
                 agent: {
                     name: 'HttpHeartbeat',
                     settings: {
-                        url: 'http://localhost:8080/heartbeat',
+                        url: 'http://localhost/heartbeat',
                     }
                 },
                 reporter: {
                     name: 'Console'
                 }
             },
-        ]
+        ],
+        connection: {}
     };
 
     const kaeos = new Kaeos(options);
