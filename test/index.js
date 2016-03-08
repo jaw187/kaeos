@@ -2,6 +2,7 @@
 
 
 const Code = require('code');
+const Hapi = require('hapi');
 const Lab = require('lab');
 const Kaeos = require('../lib');
 
@@ -16,43 +17,55 @@ describe('Keep An Eye On Shit', () => {
 
     it('runs', (done) => {
 
-        const monitors = [
-            {
-                agent: {
-                    name: 'HttpHeartbeat',
-                    settings: {
-                        url: 'http://google.com',
-                        interval: 2000
-                    }
-                },
-                reporter: {
-                    name: 'Console',
-                    settings: {}
-                }
+        // Just a server to monitor
+        const server = new Hapi.Server();
+        server.connection({ host: 'localhost' });
+        server.route({ method: 'GET', path: '/heartbeat', handler: (request, reply) => reply({ status: 'ok' }) });
+        server.start((err) => {
+
+            if (err) {
+                throw err;
             }
-        ];
 
-        const options = {
-            monitors: monitors
-        };
+            const monitors = [
+                {
+                    agent: {
+                        name: 'HttpHeartbeat',
+                        settings: {
+                            url: `${server.info.uri}/heartbeat`,
+                            interval: 2000
+                        }
+                    },
+                    reporter: {
+                        name: 'Console',
+                        settings: {}
+                    }
+                }
+            ];
 
-        const kaeos = new Kaeos(options);
-        kaeos.start((err) => {
+            const options = {
+                monitors: monitors
+            };
 
-            expect(err).to.not.exist();
-            expect(kaeos.server).to.exist();
+            const kaeos = new Kaeos(options);
+            kaeos.start((err) => {
 
-            kaeos.server.inject({
-                method: 'GET',
-                url: '/status'
-            }, (res) => {
+                expect(err).to.not.exist();
+                expect(kaeos.server).to.exist();
 
-                expect(res).to.exist();
-                expect(res.statusCode).to.equal(200);
-                expect(res.result).to.exist();
-                expect(res.result[0]).to.exist();
-                expect(res.result[0].name).to.exist();
-                expect(res.result[0].value).to.exist();
+                kaeos.server.inject({
+                    method: 'GET',
+                    url: '/status'
+                }, (res) => {
+
+                    expect(res).to.exist();
+                    expect(res.statusCode).to.equal(200);
+                    expect(res.result).to.exist();
+                    expect(res.result[0]).to.exist();
+                    expect(res.result[0].name).to.exist();
+                    expect(res.result[0].status).to.exist();
+                    done();
+                });
             });
         });
     });
