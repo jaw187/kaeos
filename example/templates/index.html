@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>KAEOS</title>
+        <style>
+            div.up { background-color: green; }
+            div.down { background-color: red; }
+        </style>
+    </head>
+    <body>
+        {{#each monitors}}
+            {{#if this.status}}
+                <div class="up">{{this.name}}</div>
+            {{else}}
+                <div class="down">{{this.name}}</div>
+            {{/if}}
+        {{/each}}
+    </body>
+</html>
