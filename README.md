@@ -1,7 +1,12 @@
 # kaeos
 Keep An Eye On Shit
 
-## Example
+## Install
+```
+npm install kaeos
+```
+
+## Usage
 ```javascript
 const Kaeos = require('kaeos');
 
