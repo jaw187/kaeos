@@ -37,7 +37,23 @@ describe('Keep An Eye On Shit', () => {
         };
 
         const kaeos = new Kaeos(options);
-        kaeos.start();
-        done();
+        kaeos.start((err) => {
+
+            expect(err).to.not.exist();
+            expect(kaeos.server).to.exist();
+
+            kaeos.server.inject({
+                method: 'GET',
+                url: '/status'
+            }, (res) => {
+
+                expect(res).to.exist();
+                expect(res.statusCode).to.equal(200);
+                expect(res.result).to.exist();
+                expect(res.result[0]).to.exist();
+                expect(res.result[0].name).to.exist();
+                expect(res.result[0].value).to.exist();
+            });
+        });
     });
 });
