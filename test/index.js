@@ -126,13 +126,11 @@ describe('Keep An Eye On Shit', () => {
 
         // Just a server to monitor
         const server = new Hapi.Server();
-        server.connection({ host: 'localhost' });
+        server.connection({ host: 'localhost', port: 10700 });
         server.route({ method: 'GET', path: '/heartbeat', handler: (request, reply) => reply({ status: 'ok' }) });
         server.start((err) => {
 
-            if (err) {
-                throw err;
-            }
+            expect(err).to.not.exist();
 
             const monitors = [
                 {
@@ -140,7 +138,8 @@ describe('Keep An Eye On Shit', () => {
                         name: 'HttpHeartbeat',
                         settings: {
                             url: `${server.info.uri}/heartbeat`,
-                            interval: 5
+                            interval: 5,
+                            attempts: 1
                         }
                     },
                     reporter: {
@@ -181,9 +180,19 @@ describe('Keep An Eye On Shit', () => {
 
                         const wait = () => {
 
-                            kaeos.stop();
-                            console.log = originalConsoleLog;
-                            done();
+                            server.start((err) => {
+
+                                expect(err).to.not.exist();
+
+                                const waitAgain = () => {
+
+                                    kaeos.stop();
+                                    console.log = originalConsoleLog;
+                                    done();
+                                };
+
+                                setTimeout(waitAgain, 25);
+                            });
                         };
 
                         setTimeout(wait, 25);
