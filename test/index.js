@@ -2,8 +2,10 @@
 
 
 const Code = require('code');
+const Fs = require('fs');
 const Hapi = require('hapi');
 const Lab = require('lab');
+const Net = require('net');
 const Vision = require('vision');
 const Kaeos = require('../lib');
 
@@ -126,7 +128,7 @@ describe('Keep An Eye On Shit', () => {
 
         // Just a server to monitor
         const server = new Hapi.Server();
-        server.connection({ host: 'localhost', port: 10700 });
+        server.connection({ host: 'localhost' });
         server.route({ method: 'GET', path: '/heartbeat', handler: (request, reply) => reply({ status: 'ok' }) });
         server.start((err) => {
 
@@ -198,6 +200,75 @@ describe('Keep An Eye On Shit', () => {
                         setTimeout(wait, 25);
                     });
                 });
+            });
+        });
+    });
+
+    it('runs redis agent', (done) => {
+
+        const originalConsoleLog = console.log;
+        console.log = () => {
+
+            return null;
+        };
+
+        const response = Fs.readFileSync('./test/redisResponse.txt', 'ascii');
+        const server = Net.createServer((socket) => {
+
+            socket.write(response);
+        });
+        server.listen();
+
+        server.on('listening', () => {
+
+            const monitors = [
+                {
+                    agent: {
+                        name: 'RedisCluster',
+                        settings: {
+                            host: server.address().address,
+                            port: server.address().port,
+                            interval: 5,
+                            attempts: 1,
+                            minClusterSize: 3,
+                            minReplicasPerMaster: 1,
+                            maxMemory: 8000000
+                        }
+                    },
+                    reporter: {
+                        name: 'Console',
+                        settings: {}
+                    }
+                }
+            ];
+
+            const options = {
+                monitors: monitors,
+                server: {
+                    plugins: Vision
+                }
+            };
+
+            const kaeos = new Kaeos(options);
+            kaeos.start((err) => {
+
+                expect(err).to.not.exist();
+                expect(kaeos.server).to.exist();
+
+                const wait = () => {
+
+                    server.close(() => {
+
+                        const waitAgain = () => {
+
+                            kaeos.stop();
+                            console.log = originalConsoleLog;
+                            return done();
+                        };
+                        setTimeout(waitAgain, 25);
+                    });
+                };
+                setTimeout(wait, 25);
             });
         });
     });
